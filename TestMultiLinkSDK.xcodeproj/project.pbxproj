@@ -7,10 +7,15 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4B393886289F83C500427FC3 /* DeviceInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B393885289F83C500427FC3 /* DeviceInfo.swift */; };
+		4B393888289F890F00427FC3 /* ListenerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B393887289F890F00427FC3 /* ListenerProtocol.swift */; };
+		4B39388A289F8D5400427FC3 /* KEYData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B393889289F8D5400427FC3 /* KEYData.swift */; };
 		4B5C9F34289CF8670037742F /* TestMultiLinkSDK.docc in Sources */ = {isa = PBXBuildFile; fileRef = 4B5C9F33289CF8670037742F /* TestMultiLinkSDK.docc */; };
 		4B5C9F3A289CF8670037742F /* TestMultiLinkSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B5C9F2F289CF8670037742F /* TestMultiLinkSDK.framework */; };
 		4B5C9F3F289CF8670037742F /* TestMultiLinkSDKTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B5C9F3E289CF8670037742F /* TestMultiLinkSDKTests.swift */; };
 		4B5C9F40289CF8670037742F /* TestMultiLinkSDK.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B5C9F32289CF8670037742F /* TestMultiLinkSDK.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4B5C9F80289D016C0037742F /* SocketService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B5C9F7F289D016C0037742F /* SocketService.swift */; };
+		4B5C9F88289D037C0037742F /* CocoaAsyncSocket in Frameworks */ = {isa = PBXBuildFile; productRef = 4B5C9F87289D037C0037742F /* CocoaAsyncSocket */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -24,11 +29,15 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		4B393885289F83C500427FC3 /* DeviceInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceInfo.swift; sourceTree = "<group>"; };
+		4B393887289F890F00427FC3 /* ListenerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListenerProtocol.swift; sourceTree = "<group>"; };
+		4B393889289F8D5400427FC3 /* KEYData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KEYData.swift; sourceTree = "<group>"; };
 		4B5C9F2F289CF8670037742F /* TestMultiLinkSDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = TestMultiLinkSDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4B5C9F32289CF8670037742F /* TestMultiLinkSDK.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestMultiLinkSDK.h; sourceTree = "<group>"; };
 		4B5C9F33289CF8670037742F /* TestMultiLinkSDK.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; path = TestMultiLinkSDK.docc; sourceTree = "<group>"; };
 		4B5C9F39289CF8670037742F /* TestMultiLinkSDKTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TestMultiLinkSDKTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		4B5C9F3E289CF8670037742F /* TestMultiLinkSDKTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestMultiLinkSDKTests.swift; sourceTree = "<group>"; };
+		4B5C9F7F289D016C0037742F /* SocketService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocketService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -36,6 +45,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4B5C9F88289D037C0037742F /* CocoaAsyncSocket in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -73,6 +83,10 @@
 			children = (
 				4B5C9F32289CF8670037742F /* TestMultiLinkSDK.h */,
 				4B5C9F33289CF8670037742F /* TestMultiLinkSDK.docc */,
+				4B5C9F7F289D016C0037742F /* SocketService.swift */,
+				4B393885289F83C500427FC3 /* DeviceInfo.swift */,
+				4B393887289F890F00427FC3 /* ListenerProtocol.swift */,
+				4B393889289F8D5400427FC3 /* KEYData.swift */,
 			);
 			path = TestMultiLinkSDK;
 			sourceTree = "<group>";
@@ -113,6 +127,9 @@
 			dependencies = (
 			);
 			name = TestMultiLinkSDK;
+			packageProductDependencies = (
+				4B5C9F87289D037C0037742F /* CocoaAsyncSocket */,
+			);
 			productName = TestMultiLinkSDK;
 			productReference = 4B5C9F2F289CF8670037742F /* TestMultiLinkSDK.framework */;
 			productType = "com.apple.product-type.framework";
@@ -162,6 +179,9 @@
 				Base,
 			);
 			mainGroup = 4B5C9F25289CF8670037742F;
+			packageReferences = (
+				4B5C9F86289D037C0037742F /* XCRemoteSwiftPackageReference "CocoaAsyncSocket" */,
+			);
 			productRefGroup = 4B5C9F30289CF8670037742F /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -194,7 +214,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4B5C9F80289D016C0037742F /* SocketService.swift in Sources */,
+				4B393886289F83C500427FC3 /* DeviceInfo.swift in Sources */,
 				4B5C9F34289CF8670037742F /* TestMultiLinkSDK.docc in Sources */,
+				4B393888289F890F00427FC3 /* ListenerProtocol.swift in Sources */,
+				4B39388A289F8D5400427FC3 /* KEYData.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -396,6 +420,7 @@
 		4B5C9F47289CF8670037742F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 9UNC2Z2573;
@@ -412,6 +437,7 @@
 		4B5C9F48289CF8670037742F /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 9UNC2Z2573;
@@ -456,6 +482,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		4B5C9F86289D037C0037742F /* XCRemoteSwiftPackageReference "CocoaAsyncSocket" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/robbiehanson/CocoaAsyncSocket";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 7.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		4B5C9F87289D037C0037742F /* CocoaAsyncSocket */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4B5C9F86289D037C0037742F /* XCRemoteSwiftPackageReference "CocoaAsyncSocket" */;
+			productName = CocoaAsyncSocket;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 4B5C9F26289CF8670037742F /* Project object */;
 }
