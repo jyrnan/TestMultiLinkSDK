@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4B08A5FD28A502E000B5E72C /* MockListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B08A5FC28A502E000B5E72C /* MockListener.swift */; };
 		4B393886289F83C500427FC3 /* DeviceInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B393885289F83C500427FC3 /* DeviceInfo.swift */; };
 		4B393888289F890F00427FC3 /* ListenerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B393887289F890F00427FC3 /* ListenerProtocol.swift */; };
 		4B39388A289F8D5400427FC3 /* KEYData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B393889289F8D5400427FC3 /* KEYData.swift */; };
@@ -29,6 +30,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		4B08A5FC28A502E000B5E72C /* MockListener.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockListener.swift; sourceTree = "<group>"; };
 		4B393885289F83C500427FC3 /* DeviceInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceInfo.swift; sourceTree = "<group>"; };
 		4B393887289F890F00427FC3 /* ListenerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListenerProtocol.swift; sourceTree = "<group>"; };
 		4B393889289F8D5400427FC3 /* KEYData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KEYData.swift; sourceTree = "<group>"; };
@@ -95,6 +97,7 @@
 			isa = PBXGroup;
 			children = (
 				4B5C9F3E289CF8670037742F /* TestMultiLinkSDKTests.swift */,
+				4B08A5FC28A502E000B5E72C /* MockListener.swift */,
 			);
 			path = TestMultiLinkSDKTests;
 			sourceTree = "<group>";
@@ -227,6 +230,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4B5C9F3F289CF8670037742F /* TestMultiLinkSDKTests.swift in Sources */,
+				4B08A5FD28A502E000B5E72C /* MockListener.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -374,6 +378,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -402,6 +407,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -425,6 +431,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 9UNC2Z2573;
 				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.wonka.TestMultiLinkSDKTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -442,6 +449,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 9UNC2Z2573;
 				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.wonka.TestMultiLinkSDKTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";

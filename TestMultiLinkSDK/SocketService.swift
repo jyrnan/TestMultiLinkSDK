@@ -14,9 +14,9 @@ import Foundation
 public class SocketService: NSObject {
     // MARK: - 变量
     
-    let UDP_PORT:UInt16       = 8000; // udp 端口
-    let UDP_COMMON_PORT:UInt16 = 8066; //通用版 UDP端口
-    let UDP_LISTEN_PORT:UInt16 = 8009; // UDP监听电视端口
+    public let UDP_PORT:UInt16       = 8000; // udp 端口
+    public let UDP_COMMON_PORT:UInt16 = 8066; //通用版 UDP端口
+    public let UDP_LISTEN_PORT:UInt16 = 8009; // UDP监听电视端口
 
     public var serviceKey = "serviceKey"
 
@@ -37,45 +37,74 @@ public class SocketService: NSObject {
     public var udpSocket: GCDAsyncUdpSocket?
     
     /// 当前可以连接的设备信息
-    public var devices: [DeviceInfo] = []
+    public var foundDevices: [DeviceInfo] = []
+    
+    ///当前连接的设备
+    public var hasConnectedToDevice: DeviceInfo? = nil
     
     /// 当前的监听者
     public var lisener: Listener?
     
-    public var isTcpConnected: Bool {checkTcpConnected()}
-    public var isUdpListening: Bool {checkUdpListen()}
+    ///作为TCP服务器端是否开始监听
+    public var isTcpListening: Bool {checkTcpServerListen()}
+    ///作为TCP客户端是否连接到服务器
+    public var isTcpConnected: Bool {checkTcpClientConnected()}
+    ///作为UDP客户端是否启动并有监听端口，可能是系统随机分配
+    public var isUdpListening: Bool {checkUdpClientListen()}
 
 
     // MARK: - 初始化方法
 
     public init(key: String = "serviceKey") {
         self.serviceKey = key
+        
     }
+    
+    
 
     // MARK: - 外部调用方法
 
     public func initSDK(key: String) {}
-    public func searchDeviceInfo(searchListener: Listener) {}
+    
+    public func searchDeviceInfo(searchListener: Listener) {
+        lisener = searchListener
+        searchDevice()
+    }
     public func createTcpChannel(info: DeviceInfo) -> Bool { return true }
     public func sendTcpData(data: Data) {}
     public func receiveTcpData(TCPListener: Listener) {
         self.lisener = TCPListener
     }
     public func closeTcpChannel() {}
-    public func createUdpChannel(info: DeviceInfo) -> Bool { return true }
+    
+    /// 建立一个UdpSoket，设置
+    /// - Parameter info: 建立连接的设备信息
+    /// - Returns: 返回连接建立状况
+    public func createUdpChannel(info: DeviceInfo) -> Bool {
+        hasConnectedToDevice = info
+        return setupUdpSocket(on: UDP_LISTEN_PORT)
+    }
+    
     public func sendGeneralCommand(command: String, data: KEYData) {}
     public func modifyDeviceName(name: String) {}
     
     //MARK: - 内部状态方法
-    private func checkTcpConnected() -> Bool {
-        guard let tcpSocket = tcpSocketClient else {return false}
-        return tcpSocket.isConnected
+    private func checkTcpServerListen() -> Bool {
+        guard let tcpServer = tcpSocketServer else {return false}
+        return tcpServer.isConnected
     }
     
-    private func checkUdpListen() -> Bool {
-        guard let udpSocket = udpSocket else {return false}
-        return udpSocket.localPort() != 0
+    private func checkTcpClientConnected() -> Bool {
+        guard let tcpClient = tcpSocketClient else {return false}
+        return tcpClient.isConnected
     }
+    
+    private func checkUdpClientListen() -> Bool {
+        guard let udpClient = udpSocket else {return false}
+        return udpClient.localPort() != 0
+    }
+    
+    
 }
 
 
@@ -192,27 +221,38 @@ extension SocketService: GCDAsyncSocketDelegate {
 extension SocketService: GCDAsyncUdpSocketDelegate {
     // MARK: - UDPClient
     
-    /// 创建UDP
-    /// - Parameter port: <#port description#>
-    public func createUdpSocket(on port: String) {
+    
+    /// 建立UDP信道
+    /// - Parameter port: 指定监听的端口号
+    /// - Returns: 返回状态
+    public func setupUdpSocket(on port: UInt16? = nil) -> Bool {
         closeUdpSocket()
         udpSocket = GCDAsyncUdpSocket(delegate: self, delegateQueue: .main)
         
         do {
-            try udpSocket?.bind(toPort: UInt16(port) ?? UDP_PORT)
+            //如果有输入端口号才监听指定端口号;
+            if let port {
+                try udpSocket?.bind(toPort: port)
+            }
+            
             try udpSocket?.enableBroadcast(true)
             try udpSocket?.beginReceiving()
+            
             print("udp信道开始了")
             lisener?.notified(with: "UPD监听开始了，端口号：\(udpSocket?.localPort())")
             
+            return true
         } catch {
             // 出错了，关闭socket
             udpSocket?.close()
             udpSocket = nil
+            
             print("socket error: \(error)")
             lisener?.notified(with: "socket error: \(error)")
+            return false
         }
     }
+    
     
     public func closeUdpSocket() {
         guard let udpSocket = self.udpSocket else {return}
@@ -220,9 +260,19 @@ extension SocketService: GCDAsyncUdpSocketDelegate {
         self.udpSocket = nil
     }
     
-    public func sendUdpData(_ data: Data, to host: String, on port: String) {
-        udpSocket?.send(data, toHost: host, port: UInt16(port)!, withTimeout: -1, tag: 0)
+    public func sendUdpData(_ data: Data, to host: String, on port: UInt16) {
+        udpSocket?.send(data, toHost: host, port: port, withTimeout: -1, tag: 0)
     }
+    
+    
+    /// 发送广播获取局域网内电视信息
+    private func searchDevice() {
+        
+        print("Start search device...")
+        let sendpack: Data = makeSeachDeviceSendPack()
+        sendUdpData(sendpack, to: "255.255.255.255", on: UDP_PORT)
+    }
+    
     
     // MARK: - UDP 代理回调方法实现
     
@@ -249,13 +299,45 @@ extension SocketService: GCDAsyncUdpSocketDelegate {
     
     /// 接受数据成功回调
     public func udpSocket(_ sock: GCDAsyncUdpSocket, didReceive data: Data, fromAddress address: Data, withFilterContext filterContext: Any?) {
+        
         print(#function)
+        
+        var host:NSString? = nil
+        var port:UInt16 = 0
+        GCDAsyncUdpSocket.getHost(&host, port: &port, fromAddress: address)
+        
+        lisener?.notified(with: "from:\(host ?? "unkonw")):\(port)")
         lisener?.deliver(data: data)
+        
+        
     }
     
     /// 关闭成功回调
     public func udpSocketDidClose(_ sock: GCDAsyncUdpSocket, withError error: Error?) {
-        print(#function)
+        print(#function, "\(error)")
         lisener?.notified(with: "UdpSocket关闭了")
+    }
+}
+
+//MARK: - 数据处理
+extension SocketService {
+    
+    /// 创建并返回用于搜索局域网设备的UDP广播包
+    /// - Parameter device: 发出搜寻包的设备信息
+    /// - Returns:
+    private func makeSeachDeviceSendPack(with device:DeviceInfo? = nil) -> Data {
+        var sendPack: Data = Data(capacity: 50)
+        let devicename:Data = (device?.name ?? "UnamedDevice").data(using: .utf8)!
+        var length: UInt16 = UInt16(devicename.count + 8).bigEndian
+        let nsdata_length = Data(bytes: &length, count: MemoryLayout.size(ofValue: length))
+        
+        sendPack.append(nsdata_length)
+        sendPack.append(contentsOf: [0x00,0x70]) //包命令值
+        sendPack.append(contentsOf: [0x00,0x00,0x00,0x00]) //Service_id保留字段
+        sendPack.append(contentsOf: [0x00,0x08]) //协议版本
+        sendPack.append(contentsOf: [0x01,0x01]) //平台类型： iOS
+        sendPack.append(devicename) // 不包含包命令值的数据总长度：DeviceName长度 + 8
+        
+        return sendPack
     }
 }
