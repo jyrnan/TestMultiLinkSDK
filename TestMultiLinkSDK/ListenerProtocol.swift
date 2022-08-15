@@ -11,6 +11,7 @@ public protocol Listener {
 
     func deliver(data: Data)
     func notified(with message: String)
+    func deliver(devices: [DeviceInfo])
 }
 
 enum YMLResponse{

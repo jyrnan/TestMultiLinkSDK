@@ -11,6 +11,7 @@
 		4B393886289F83C500427FC3 /* DeviceInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B393885289F83C500427FC3 /* DeviceInfo.swift */; };
 		4B393888289F890F00427FC3 /* ListenerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B393887289F890F00427FC3 /* ListenerProtocol.swift */; };
 		4B39388A289F8D5400427FC3 /* KEYData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B393889289F8D5400427FC3 /* KEYData.swift */; };
+		4B461BDF28AA51600097EBF2 /* MockUdpServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B461BDE28AA51600097EBF2 /* MockUdpServer.swift */; };
 		4B5C9F34289CF8670037742F /* TestMultiLinkSDK.docc in Sources */ = {isa = PBXBuildFile; fileRef = 4B5C9F33289CF8670037742F /* TestMultiLinkSDK.docc */; };
 		4B5C9F3A289CF8670037742F /* TestMultiLinkSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B5C9F2F289CF8670037742F /* TestMultiLinkSDK.framework */; };
 		4B5C9F3F289CF8670037742F /* TestMultiLinkSDKTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B5C9F3E289CF8670037742F /* TestMultiLinkSDKTests.swift */; };
@@ -34,6 +35,7 @@
 		4B393885289F83C500427FC3 /* DeviceInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceInfo.swift; sourceTree = "<group>"; };
 		4B393887289F890F00427FC3 /* ListenerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListenerProtocol.swift; sourceTree = "<group>"; };
 		4B393889289F8D5400427FC3 /* KEYData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KEYData.swift; sourceTree = "<group>"; };
+		4B461BDE28AA51600097EBF2 /* MockUdpServer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockUdpServer.swift; sourceTree = "<group>"; };
 		4B5C9F2F289CF8670037742F /* TestMultiLinkSDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = TestMultiLinkSDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4B5C9F32289CF8670037742F /* TestMultiLinkSDK.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestMultiLinkSDK.h; sourceTree = "<group>"; };
 		4B5C9F33289CF8670037742F /* TestMultiLinkSDK.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; path = TestMultiLinkSDK.docc; sourceTree = "<group>"; };
@@ -98,6 +100,7 @@
 			children = (
 				4B5C9F3E289CF8670037742F /* TestMultiLinkSDKTests.swift */,
 				4B08A5FC28A502E000B5E72C /* MockListener.swift */,
+				4B461BDE28AA51600097EBF2 /* MockUdpServer.swift */,
 			);
 			path = TestMultiLinkSDKTests;
 			sourceTree = "<group>";
@@ -231,6 +234,7 @@
 			files = (
 				4B5C9F3F289CF8670037742F /* TestMultiLinkSDKTests.swift in Sources */,
 				4B08A5FD28A502E000B5E72C /* MockListener.swift in Sources */,
+				4B461BDF28AA51600097EBF2 /* MockUdpServer.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

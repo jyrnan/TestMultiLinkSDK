@@ -7,7 +7,11 @@
 
 import Foundation
 
-public struct DeviceInfo: Codable {
+public struct DeviceInfo: Codable, CustomStringConvertible {
+    public var description: String {
+        return "设备信息：\n名称:\(name)\n平台:\(platform)\n地址:\(ip)\n版本:\(sdkVersion)"
+    }
+    
     let name: String
     let platform: String
     var ip: String

@@ -14,6 +14,7 @@ struct MockListener: Listener {
     let verifyData: Data!
 
     var onDeliver: Callback = nil
+    var onDeliverDeviceInfo: Callback = nil
     var onNotified: Callback = nil
     
     var expectation: XCTestExpectation? = nil
@@ -24,6 +25,11 @@ struct MockListener: Listener {
         if data == verifyData {
             self.onDeliver?()
         }
+    }
+    
+    func deliver(devices: [DeviceInfo]) {
+        print(#function)
+        self.onDeliverDeviceInfo?()
     }
     
     func notified(with message: String) {

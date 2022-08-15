@@ -301,13 +301,8 @@ extension SocketService: GCDAsyncUdpSocketDelegate {
     public func udpSocket(_ sock: GCDAsyncUdpSocket, didReceive data: Data, fromAddress address: Data, withFilterContext filterContext: Any?) {
         
         print(#function)
-        
-        var host:NSString? = nil
-        var port:UInt16 = 0
-        GCDAsyncUdpSocket.getHost(&host, port: &port, fromAddress: address)
-        
-        lisener?.notified(with: "from:\(host ?? "unkonw")):\(port)")
-        lisener?.deliver(data: data)
+ 
+        searchDeviceDataHandler(data: data, from: address)
         
         
     }
@@ -324,7 +319,7 @@ extension SocketService {
     
     /// 创建并返回用于搜索局域网设备的UDP广播包
     /// - Parameter device: 发出搜寻包的设备信息
-    /// - Returns:
+    /// - Returns:带有搜寻设备名称信息的广播包数据
     private func makeSeachDeviceSendPack(with device:DeviceInfo? = nil) -> Data {
         var sendPack: Data = Data(capacity: 50)
         let devicename:Data = (device?.name ?? "UnamedDevice").data(using: .utf8)!
@@ -341,3 +336,62 @@ extension SocketService {
         return sendPack
     }
 }
+
+//MARK: - 设备查找
+extension SocketService {
+    
+    private func searchDeviceDataHandler(data: Data, from address: Data) {
+        var ip: NSString?
+        var port: UInt16 = 0
+        GCDAsyncSocket.getHost(&ip, port: &port, fromAddress: address)
+        
+        var sdkVersion: String
+        var platform: String
+        
+        guard data.count > 12 else {return}
+        
+        sdkVersion = data[8...9].map{String(format: "%02x", $0)}.joined()
+        platform = data[10...11].map{String(format: "%02x", $0)}.joined()
+        
+        guard let deviceName = String(data: data[12...], encoding: .utf8) else {return}
+        
+        let device = DeviceInfo(name: deviceName, platform: platform, ip: ip! as String, sdkVersion: sdkVersion)
+        
+        recieveOneDevice(device: device)
+        
+    }
+    
+    private func recieveOneDevice(device: DeviceInfo) {
+        
+        print("--------- Technology research UDP did receive data \(device.description)-----------------")
+        
+        if device.platform == "21" || device.platform == "02ff" { //如果是电视？
+            if !isContainsDevice(device: device) {
+                addDevice(device: device)
+                
+                lisener?.deliver(devices: foundDevices)
+            }
+        }
+        
+        if !isTcpConnected {
+            //TODO: - 建立连接到该设备TCP连接
+        }
+    }
+    
+    private func isContainsDevice(device: DeviceInfo) -> Bool {
+        return foundDevices.contains {
+            return device.ip == $0.ip  && device.name == $0.name
+        }
+    }
+    
+    private func addDevice(device: DeviceInfo) {
+        if !self.isContainsDevice(device: device) {
+            foundDevices.append(device)
+        }
+    }
+    
+    private func clearDevices() {
+        return foundDevices.removeAll()
+    }
+}
+	

@@ -70,12 +70,12 @@ final class TestMultiLinkSDKTests: XCTestCase {
         XCTAssertNil(sut.udpSocket)
     }
     
-    func testCreateUdpChanneWithLocalDevice() {
-        sut.createUdpChannel(info: localDevice)
-        
-        XCTAssertTrue(sut.isUdpListening)
-        XCTAssertEqual(sut.udpSocket?.localPort(), sut.UDP_LISTEN_PORT)
-    }
+//    func testCreateUdpChanneWithLocalDevice() {
+//        sut.createUdpChannel(info: localDevice)
+//        
+//        XCTAssertTrue(sut.isUdpListening)
+//        XCTAssertEqual(sut.udpSocket?.localPort(), sut.UDP_LISTEN_PORT)
+//    }
     
     func testSetupUdpSocketWithNoPort() {
         sut.closeUdpSocket()
@@ -108,28 +108,52 @@ final class TestMultiLinkSDKTests: XCTestCase {
         }
     }
     
-    func testSendUdpData() {
-        let expectation = XCTestExpectation(description: "测试是否发送数据")
-        var mockListener = MockListener(verifyData: willSentData)
+//    func testSendUdpData() {
+//        let expectation = XCTestExpectation(description: "测试是否发送数据")
+//        var mockListener = MockListener(verifyData: willSentData)
+//
+//        let didDeliver = {
+//            expectation.fulfill()
+//        }
+//
+//        mockListener.onDeliver = didDeliver
+//
+//        sut.lisener = mockListener
+//
+//        let testPort = randomValidPort()
+//
+//        guard sut.setupUdpSocket(on:testPort) else {
+//            XCTFail("不能建立本地连接，测试失败")
+//            return
+//        }
+//
+//        sut.sendUdpData(willSentData, to:"localhost" , on: testPort)
+//
+//        wait(for: [expectation], timeout: 1)
+//    }
+//
+    func testSearchDeciceInfo() {
         
-        let didDeliver = {
+        let expectation = XCTestExpectation(description: "测试获得查找结果")
+        var mockListener = MockListener(verifyData:willSentData)
+        
+        let didDeliverDeciceInfo = {
             expectation.fulfill()
         }
         
-        mockListener.onDeliver = didDeliver
+        mockListener.onDeliverDeviceInfo = didDeliverDeciceInfo
         
-        sut.lisener = mockListener
+        let mockUdpServer = MockUdpServer()
+        _ = mockUdpServer.setupServer()
         
-        let testPort = randomValidPort()
-        
-        guard sut.setupUdpSocket(on:testPort) else {
+        guard sut.setupUdpSocket(on:sut.UDP_LISTEN_PORT) else {
             XCTFail("不能建立本地连接，测试失败")
             return
         }
         
-        sut.sendUdpData(willSentData, to:"localhost" , on: testPort)
-        
+        sut.searchDeviceInfo(searchListener: mockListener)
+                
         wait(for: [expectation], timeout: 1)
     }
-
+   
 }
