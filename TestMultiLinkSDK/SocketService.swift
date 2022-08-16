@@ -55,27 +55,35 @@ public class SocketService: NSObject {
 
     // MARK: - 初始化方法
 
-    public init(key: String = "serviceKey") {
-        self.serviceKey = key
-        
-    }
+//    public init(key: String = "serviceKey") {
+//        self.serviceKey = key
+//
+//    }
     
     
 
     // MARK: - 外部调用方法
 
-    public func initSDK(key: String) {}
+    public func initSDK(key: String) {
+        self.serviceKey = key
+    }
     
     public func searchDeviceInfo(searchListener: Listener) {
         lisener = searchListener
         searchDevice()
     }
-    public func createTcpChannel(info: DeviceInfo) -> Bool { return true }
-    public func sendTcpData(data: Data) {}
+    public func createTcpChannel(info: DeviceInfo) -> Bool {
+        //TODO: -
+        return true }
+    public func sendTcpData(data: Data) {
+        //TODO: -
+    }
     public func receiveTcpData(TCPListener: Listener) {
         self.lisener = TCPListener
     }
-    public func closeTcpChannel() {}
+    public func closeTcpChannel() {
+        //TODO: -
+    }
     
     /// 建立一个UdpSoket，设置
     /// - Parameter info: 建立连接的设备信息

@@ -19,7 +19,7 @@ final class TestMultiLinkSDKTests: XCTestCase {
         // Put setup code here. This method is called before the invocation of each test method in the class.
         try super.setUpWithError()
         
-        sut = SocketService(key: "TestClientName")
+        sut = SocketService()
         
     }
 
@@ -49,7 +49,8 @@ final class TestMultiLinkSDKTests: XCTestCase {
         }
     }
     
-    func testInit() {
+    func testInitSDK() {
+        sut.initSDK(key: "TestClientName")
         XCTAssertEqual(sut.serviceKey, "TestClientName")
         XCTAssertNil(sut.tcpSocketServer)
         XCTAssertNil(sut.tcpSocketClient)
@@ -69,13 +70,6 @@ final class TestMultiLinkSDKTests: XCTestCase {
         XCTAssertFalse(sut.isUdpListening)
         XCTAssertNil(sut.udpSocket)
     }
-    
-//    func testCreateUdpChanneWithLocalDevice() {
-//        sut.createUdpChannel(info: localDevice)
-//        
-//        XCTAssertTrue(sut.isUdpListening)
-//        XCTAssertEqual(sut.udpSocket?.localPort(), sut.UDP_LISTEN_PORT)
-//    }
     
     func testSetupUdpSocketWithNoPort() {
         sut.closeUdpSocket()
@@ -107,31 +101,7 @@ final class TestMultiLinkSDKTests: XCTestCase {
             XCTAssertFalse(sut.isUdpListening)
         }
     }
-    
-//    func testSendUdpData() {
-//        let expectation = XCTestExpectation(description: "测试是否发送数据")
-//        var mockListener = MockListener(verifyData: willSentData)
-//
-//        let didDeliver = {
-//            expectation.fulfill()
-//        }
-//
-//        mockListener.onDeliver = didDeliver
-//
-//        sut.lisener = mockListener
-//
-//        let testPort = randomValidPort()
-//
-//        guard sut.setupUdpSocket(on:testPort) else {
-//            XCTFail("不能建立本地连接，测试失败")
-//            return
-//        }
-//
-//        sut.sendUdpData(willSentData, to:"localhost" , on: testPort)
-//
-//        wait(for: [expectation], timeout: 1)
-//    }
-//
+
     func testSearchDeciceInfo() {
         
         let expectation = XCTestExpectation(description: "测试获得查找结果")
