@@ -12,12 +12,12 @@
 		4B393888289F890F00427FC3 /* ListenerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B393887289F890F00427FC3 /* ListenerProtocol.swift */; };
 		4B39388A289F8D5400427FC3 /* KEYData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B393889289F8D5400427FC3 /* KEYData.swift */; };
 		4B461BDF28AA51600097EBF2 /* MockUdpServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B461BDE28AA51600097EBF2 /* MockUdpServer.swift */; };
+		4B52604028AB928C00AF114E /* CocoaAsyncSocket in Frameworks */ = {isa = PBXBuildFile; productRef = 4B52603F28AB928C00AF114E /* CocoaAsyncSocket */; };
 		4B5C9F34289CF8670037742F /* TestMultiLinkSDK.docc in Sources */ = {isa = PBXBuildFile; fileRef = 4B5C9F33289CF8670037742F /* TestMultiLinkSDK.docc */; };
 		4B5C9F3A289CF8670037742F /* TestMultiLinkSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B5C9F2F289CF8670037742F /* TestMultiLinkSDK.framework */; };
 		4B5C9F3F289CF8670037742F /* TestMultiLinkSDKTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B5C9F3E289CF8670037742F /* TestMultiLinkSDKTests.swift */; };
 		4B5C9F40289CF8670037742F /* TestMultiLinkSDK.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B5C9F32289CF8670037742F /* TestMultiLinkSDK.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4B5C9F80289D016C0037742F /* SocketService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B5C9F7F289D016C0037742F /* SocketService.swift */; };
-		4B5C9F88289D037C0037742F /* CocoaAsyncSocket in Frameworks */ = {isa = PBXBuildFile; productRef = 4B5C9F87289D037C0037742F /* CocoaAsyncSocket */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -49,7 +49,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4B5C9F88289D037C0037742F /* CocoaAsyncSocket in Frameworks */,
+				4B52604028AB928C00AF114E /* CocoaAsyncSocket in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -70,6 +70,7 @@
 				4B5C9F31289CF8670037742F /* TestMultiLinkSDK */,
 				4B5C9F3D289CF8670037742F /* TestMultiLinkSDKTests */,
 				4B5C9F30289CF8670037742F /* Products */,
+				4BCBC10228AB744700C3AFBE /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -105,6 +106,13 @@
 			path = TestMultiLinkSDKTests;
 			sourceTree = "<group>";
 		};
+		4BCBC10228AB744700C3AFBE /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -134,7 +142,7 @@
 			);
 			name = TestMultiLinkSDK;
 			packageProductDependencies = (
-				4B5C9F87289D037C0037742F /* CocoaAsyncSocket */,
+				4B52603F28AB928C00AF114E /* CocoaAsyncSocket */,
 			);
 			productName = TestMultiLinkSDK;
 			productReference = 4B5C9F2F289CF8670037742F /* TestMultiLinkSDK.framework */;
@@ -186,7 +194,7 @@
 			);
 			mainGroup = 4B5C9F25289CF8670037742F;
 			packageReferences = (
-				4B5C9F86289D037C0037742F /* XCRemoteSwiftPackageReference "CocoaAsyncSocket" */,
+				4B52603E28AB928C00AF114E /* XCRemoteSwiftPackageReference "CocoaAsyncSocket" */,
 			);
 			productRefGroup = 4B5C9F30289CF8670037742F /* Products */;
 			projectDirPath = "";
@@ -496,20 +504,20 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		4B5C9F86289D037C0037742F /* XCRemoteSwiftPackageReference "CocoaAsyncSocket" */ = {
+		4B52603E28AB928C00AF114E /* XCRemoteSwiftPackageReference "CocoaAsyncSocket" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/robbiehanson/CocoaAsyncSocket";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 7.0.0;
+				branch = master;
+				kind = branch;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		4B5C9F87289D037C0037742F /* CocoaAsyncSocket */ = {
+		4B52603F28AB928C00AF114E /* CocoaAsyncSocket */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 4B5C9F86289D037C0037742F /* XCRemoteSwiftPackageReference "CocoaAsyncSocket" */;
+			package = 4B52603E28AB928C00AF114E /* XCRemoteSwiftPackageReference "CocoaAsyncSocket" */;
 			productName = CocoaAsyncSocket;
 		};
 /* End XCSwiftPackageProductDependency section */
