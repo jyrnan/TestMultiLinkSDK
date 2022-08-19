@@ -13,11 +13,14 @@
 		4B39388A289F8D5400427FC3 /* KEYData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B393889289F8D5400427FC3 /* KEYData.swift */; };
 		4B461BDF28AA51600097EBF2 /* MockUdpServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B461BDE28AA51600097EBF2 /* MockUdpServer.swift */; };
 		4B52604028AB928C00AF114E /* CocoaAsyncSocket in Frameworks */ = {isa = PBXBuildFile; productRef = 4B52603F28AB928C00AF114E /* CocoaAsyncSocket */; };
+		4B52604928ACA12C00AF114E /* DiscoveryInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B52604828ACA12C00AF114E /* DiscoveryInfo.swift */; };
+		4B52604B28ADDF7400AF114E /* YMLNetworkService+TCP.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B52604A28ADDF7400AF114E /* YMLNetworkService+TCP.swift */; };
+		4B52604D28ADDFFA00AF114E /* YMLNetworkService+UDP.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B52604C28ADDFFA00AF114E /* YMLNetworkService+UDP.swift */; };
 		4B5C9F34289CF8670037742F /* TestMultiLinkSDK.docc in Sources */ = {isa = PBXBuildFile; fileRef = 4B5C9F33289CF8670037742F /* TestMultiLinkSDK.docc */; };
 		4B5C9F3A289CF8670037742F /* TestMultiLinkSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B5C9F2F289CF8670037742F /* TestMultiLinkSDK.framework */; };
 		4B5C9F3F289CF8670037742F /* TestMultiLinkSDKTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B5C9F3E289CF8670037742F /* TestMultiLinkSDKTests.swift */; };
 		4B5C9F40289CF8670037742F /* TestMultiLinkSDK.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B5C9F32289CF8670037742F /* TestMultiLinkSDK.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		4B5C9F80289D016C0037742F /* SocketService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B5C9F7F289D016C0037742F /* SocketService.swift */; };
+		4B5C9F80289D016C0037742F /* YMLNetworkService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B5C9F7F289D016C0037742F /* YMLNetworkService.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -36,12 +39,15 @@
 		4B393887289F890F00427FC3 /* ListenerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListenerProtocol.swift; sourceTree = "<group>"; };
 		4B393889289F8D5400427FC3 /* KEYData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KEYData.swift; sourceTree = "<group>"; };
 		4B461BDE28AA51600097EBF2 /* MockUdpServer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockUdpServer.swift; sourceTree = "<group>"; };
+		4B52604828ACA12C00AF114E /* DiscoveryInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiscoveryInfo.swift; sourceTree = "<group>"; };
+		4B52604A28ADDF7400AF114E /* YMLNetworkService+TCP.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "YMLNetworkService+TCP.swift"; sourceTree = "<group>"; };
+		4B52604C28ADDFFA00AF114E /* YMLNetworkService+UDP.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "YMLNetworkService+UDP.swift"; sourceTree = "<group>"; };
 		4B5C9F2F289CF8670037742F /* TestMultiLinkSDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = TestMultiLinkSDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4B5C9F32289CF8670037742F /* TestMultiLinkSDK.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestMultiLinkSDK.h; sourceTree = "<group>"; };
 		4B5C9F33289CF8670037742F /* TestMultiLinkSDK.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; path = TestMultiLinkSDK.docc; sourceTree = "<group>"; };
 		4B5C9F39289CF8670037742F /* TestMultiLinkSDKTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TestMultiLinkSDKTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		4B5C9F3E289CF8670037742F /* TestMultiLinkSDKTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestMultiLinkSDKTests.swift; sourceTree = "<group>"; };
-		4B5C9F7F289D016C0037742F /* SocketService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocketService.swift; sourceTree = "<group>"; };
+		4B5C9F7F289D016C0037742F /* YMLNetworkService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YMLNetworkService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -88,8 +94,11 @@
 			children = (
 				4B5C9F32289CF8670037742F /* TestMultiLinkSDK.h */,
 				4B5C9F33289CF8670037742F /* TestMultiLinkSDK.docc */,
-				4B5C9F7F289D016C0037742F /* SocketService.swift */,
+				4B5C9F7F289D016C0037742F /* YMLNetworkService.swift */,
+				4B52604A28ADDF7400AF114E /* YMLNetworkService+TCP.swift */,
+				4B52604C28ADDFFA00AF114E /* YMLNetworkService+UDP.swift */,
 				4B393885289F83C500427FC3 /* DeviceInfo.swift */,
+				4B52604828ACA12C00AF114E /* DiscoveryInfo.swift */,
 				4B393887289F890F00427FC3 /* ListenerProtocol.swift */,
 				4B393889289F8D5400427FC3 /* KEYData.swift */,
 			);
@@ -228,11 +237,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4B5C9F80289D016C0037742F /* SocketService.swift in Sources */,
+				4B5C9F80289D016C0037742F /* YMLNetworkService.swift in Sources */,
+				4B52604928ACA12C00AF114E /* DiscoveryInfo.swift in Sources */,
+				4B52604B28ADDF7400AF114E /* YMLNetworkService+TCP.swift in Sources */,
 				4B393886289F83C500427FC3 /* DeviceInfo.swift in Sources */,
 				4B5C9F34289CF8670037742F /* TestMultiLinkSDK.docc in Sources */,
 				4B393888289F890F00427FC3 /* ListenerProtocol.swift in Sources */,
 				4B39388A289F8D5400427FC3 /* KEYData.swift in Sources */,
+				4B52604D28ADDFFA00AF114E /* YMLNetworkService+UDP.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

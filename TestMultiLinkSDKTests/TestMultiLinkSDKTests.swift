@@ -5,26 +5,38 @@
 //  Created by Yong Jin on 2022/8/5.
 //
 
-import XCTest
 @testable import TestMultiLinkSDK
+import XCTest
 
 final class TestMultiLinkSDKTests: XCTestCase {
+    var sut: YMLNetworkService!
+    var mockServer: MockUdpServer!
     
-    var sut: SocketService!
     let willSentData: Data = "TestData".data(using: .utf8)!
     
-    var localDevice:  DeviceInfo = DeviceInfo(name:"LocalDevice")
+    var localDevice: DeviceInfo = .init(name: "LocalDevice")
 
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.
         try super.setUpWithError()
         
-        sut = SocketService()
+        sut = YMLNetworkService()
         
+        mockServer = MockUdpServer()
+        _ = mockServer.setupServer()
     }
 
     override func tearDownWithError() throws {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
+        try super.tearDownWithError()
+        
+        mockServer.udpSocket?.close()
+        mockServer.udpSocket = nil
+        mockServer = nil
+        
+        sut.udpSocket?.close()
+        sut.udpSocket = nil
+        sut = nil
     }
     
     fileprivate func randomValidPort() -> UInt16 {
@@ -44,7 +56,7 @@ final class TestMultiLinkSDKTests: XCTestCase {
 
     func testPerformanceExample() throws {
         // This is an example of a performance test case.
-        self.measure {
+        measure {
             // Put the code you want to measure the time of here.
         }
     }
@@ -57,7 +69,7 @@ final class TestMultiLinkSDKTests: XCTestCase {
         XCTAssertTrue(sut.tcpSockets.isEmpty)
         XCTAssertNil(sut.udpSocket)
         
-        XCTAssertTrue(sut.foundDevices.isEmpty)
+        XCTAssertTrue(sut.discoveredDevice.isEmpty)
         XCTAssertNil(sut.hasConnectedToDevice)
         
         XCTAssertFalse(sut.isTcpListening)
@@ -101,11 +113,27 @@ final class TestMultiLinkSDKTests: XCTestCase {
             XCTAssertFalse(sut.isUdpListening)
         }
     }
+    
+    func testSetupUdpSocketWithOccupiedPort() {
+        sut.closeUdpSocket()
+        let port: UInt16 = 80
+        
+        let sut2 = YMLNetworkService()
+        guard sut2.setupUdpSocket(on: 80) else {
+            XCTFail("创建端口占用未成功，测试失败")
+            return
+        }
+        
+        let result = sut.setupUdpSocket(on: port)
+        
+        XCTAssertFalse(result)
+        XCTAssertNil(sut.udpSocket)
+        XCTAssertFalse(sut.isUdpListening)
+    }
 
     func testSearchDeciceInfo() {
-        
         let expectation = XCTestExpectation(description: "测试获得查找结果")
-        var mockListener = MockListener(verifyData:willSentData)
+        var mockListener = MockListener(verifyData: willSentData)
         
         let didDeliverDeciceInfo = {
             expectation.fulfill()
@@ -113,10 +141,7 @@ final class TestMultiLinkSDKTests: XCTestCase {
         
         mockListener.onDeliverDeviceInfo = didDeliverDeciceInfo
         
-        let mockUdpServer = MockUdpServer()
-        _ = mockUdpServer.setupServer()
-        
-        guard sut.setupUdpSocket(on:sut.UDP_LISTEN_PORT) else {
+        guard sut.setupUdpSocket(on: sut.UDP_LISTEN_PORT) else {
             XCTFail("不能建立本地连接，测试失败")
             return
         }
@@ -125,5 +150,27 @@ final class TestMultiLinkSDKTests: XCTestCase {
                 
         wait(for: [expectation], timeout: 1)
     }
-   
+    
+    func testSendGeneralCommand() {
+        let expectation = XCTestExpectation(description: "测试发送通用命令")
+        let didSendGeneralCommand = {
+            expectation.fulfill()
+        }
+        
+        mockServer.didSendGeneralCommand = didSendGeneralCommand
+        
+        guard sut.setupUdpSocket(on:sut.UDP_LISTEN_PORT) else {
+            XCTFail("不能建立本地连接，测试失败")
+            return
+        }
+                
+        let localDevice = DeviceInfo(ip: "127.0.0.1")
+        let localDiscoveryInfo = DiscoveryInfo(device: localDevice, TcpPort: 8000, UdpPort: 8000)
+        sut.discoveredDevice.append(localDiscoveryInfo)
+        sut.hasConnectedToDevice = localDevice
+        
+        XCTAssertTrue(sut.sendGeneralCommand(command: "Mouse", data: KEYData()))
+        
+        wait(for: [expectation], timeout: 1)
+    }
 }

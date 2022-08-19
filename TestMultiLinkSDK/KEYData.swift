@@ -13,4 +13,8 @@ public struct KEYData {
     let z: Double = 0
     let speed: Double = 0
     var v: String?
+    
+    public init(v: String? = nil) {
+        self.v = v
+    }
 }
