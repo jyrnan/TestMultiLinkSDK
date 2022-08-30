@@ -5,8 +5,8 @@
 //  Created by Yong Jin on 2022/8/18.
 //
 
-import Foundation
 import CocoaAsyncSocket
+import Foundation
 
 extension YMLNetworkService: GCDAsyncSocketDelegate {
     // MARK: - TCPClient
@@ -27,12 +27,14 @@ extension YMLNetworkService: GCDAsyncSocketDelegate {
         
         do {
             try tcpSocketClient?.connect(toHost: ip, onPort: port)
-            print("连接成功")
-            lisener?.notified(with: "连接成功")
+            print("tcp连接成功")
+            isTcpConnected = true
+            lisener?.notified(with: "tcp连接成功")
             return true
         } catch {
-            print("连接失败: \(error)")
-            lisener?.notified(with: "连接失败: \(error)")
+            print("tcp连接失败: \(error)")
+            lisener?.notified(with: "tcp连接失败: \(error)")
+            updateHasConnectedToDevice()
             return false
         }
     }
@@ -41,8 +43,8 @@ extension YMLNetworkService: GCDAsyncSocketDelegate {
     public func closeTCPChannel() {
         guard let socket = tcpSocketClient else { return }
         socket.disconnect()
-        print("断开连接")
-        lisener?.notified(with: "断开连接")
+        print("tcp断开连接")
+        lisener?.notified(with: "tcp断开连接")
     }
 
     // TODO: - 心跳方法
@@ -56,6 +58,7 @@ extension YMLNetworkService: GCDAsyncSocketDelegate {
         do {
             try tcpSocketServer?.accept(onPort: UInt16(port)!)
             print("监听成功")
+            isTcpListening = true
             lisener?.notified(with: "监听成功")
             return true
             
@@ -82,13 +85,10 @@ extension YMLNetworkService: GCDAsyncSocketDelegate {
     ///   - sock:
     ///   - newSocket:
     public func socket(_ sock: GCDAsyncSocket, didAcceptNewSocket newSocket: GCDAsyncSocket) {
-        print("连接成功")
-        print("连接地址" + newSocket.connectedHost!)
-        print("端口号 \(newSocket.connectedPort)")
-        tcpSocketClient = newSocket
+        print(#line, #function, "\n接受TCP连接成功." + "连接地址: " + newSocket.connectedHost! + " 端口号: \(newSocket.connectedPort)")
         
         // 第一次开始读取Data
-        tcpSocketClient!.readData(withTimeout: -1, tag: 0)
+        newSocket.readData(withTimeout: -1, tag: 0)
     }
     
     /// 连接到新的Socket时的代理回调
@@ -97,8 +97,20 @@ extension YMLNetworkService: GCDAsyncSocketDelegate {
     ///   - host: <#host description#>
     ///   - port: <#port description#>
     public func socket(_ sock: GCDAsyncSocket, didConnectToHost host: String, port: UInt16) {
-        print("连接到服务器：" + host)
+        print("连接到TCP服务器：" + host)
+        print(#line, #function, tcpSocketClient?.isConnected)
         tcpSocketClient?.readData(withTimeout: -1, tag: 0)
+    }
+    
+    public func socketDidDisconnect(_ sock: GCDAsyncSocket, withError err: Error?) {
+        switch sock {
+        case tcpSocketServer:
+            isTcpListening = false
+        case tcpSocketClient:
+            isTcpConnected = false
+        default:
+            return
+        }
     }
     
     /// TCPSocket收到数据的代理回调

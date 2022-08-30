@@ -8,14 +8,30 @@
 import Foundation
 import CocoaAsyncSocket
 
-class MockUdpServer: NSObject, GCDAsyncUdpSocketDelegate{
+class MockUdpServer: NSObject, GCDAsyncUdpSocketDelegate, GCDAsyncSocketDelegate{
     
     typealias Callback = Optional<() -> Void>
     var udpSocket: GCDAsyncUdpSocket?
+    var tcpServerSocket: GCDAsyncSocket?
     
     var didSendGeneralCommand: Callback = nil
     
-    func setupServer() -> Bool {
+    func setupTcpServer() -> Bool {
+        tcpServerSocket = GCDAsyncSocket(delegate: self, delegateQueue: DispatchQueue.main)
+        
+        do {
+            try tcpServerSocket?.accept(onPort: 8000)
+            print("MockServer tcp信道开始了")
+            
+            return true
+        } catch {
+            print("socket error: \(error)")
+            return false
+        }
+
+    }
+    
+    func setupUdpServer() -> Bool {
         udpSocket = GCDAsyncUdpSocket(delegate: self, delegateQueue: DispatchQueue.main)
         
         do {
@@ -24,7 +40,7 @@ class MockUdpServer: NSObject, GCDAsyncUdpSocketDelegate{
             try udpSocket?.enableBroadcast(true)
             try udpSocket?.beginReceiving()
             
-            print("udp信道开始了")
+            print("MockServer udp信道开始了")
             
             return true
         } catch {
@@ -42,6 +58,8 @@ class MockUdpServer: NSObject, GCDAsyncUdpSocketDelegate{
         udpSocket = nil
     }
     
+    //MARK: - Delegate part
+    
     func udpSocket(_ sock: GCDAsyncUdpSocket, didReceive data: Data, fromAddress address: Data, withFilterContext filterContext: Any?) {
         var returnData = Data(capacity: 50)
         returnData.append(contentsOf: [0x00, 0x00,0x00, 0x00,0x00, 0x00,0x00, 0x00,0x00, 0x00,0x02, 0xff])
@@ -49,6 +67,17 @@ class MockUdpServer: NSObject, GCDAsyncUdpSocketDelegate{
         udpSocket?.send(returnData,toHost: "localhost", port: 8009, withTimeout: -1, tag: 0)
         
         didSendGeneralCommand?()
+    }
+    
+    func socket(_ sock: GCDAsyncSocket, didAcceptNewSocket newSocket: GCDAsyncSocket) {
+        print(sock.description)
+        didSendGeneralCommand?()
+    
+        print(#line, #function,"\n接受TCP连接成功." + "连接地址: " + newSocket.connectedHost! + " 端口号: \(newSocket.connectedPort)")
+        
+        
+        // 第一次开始读取Data
+        newSocket.readData(withTimeout: -1, tag: 0)
     }
 }
 

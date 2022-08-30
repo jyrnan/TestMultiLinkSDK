@@ -20,7 +20,7 @@ extension YMLNetworkService: GCDAsyncUdpSocketDelegate {
         
         do {
             // 如果有输入端口号才监听指定端口号;
-            if let port {
+            if let port = port {
                 try udpSocket?.bind(toPort: port)
             }
             

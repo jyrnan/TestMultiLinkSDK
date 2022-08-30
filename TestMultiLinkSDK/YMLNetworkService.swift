@@ -44,9 +44,11 @@ public class YMLNetworkService: NSObject {
     public var lisener: Listener?
     
     /// 作为TCP服务器端是否开始监听
-    public var isTcpListening: Bool { checkTcpServerListen() }
+    public var isTcpListening: Bool = false //{ checkTcpServerListen() }
+    
     /// 作为TCP客户端是否连接到服务器
-    public var isTcpConnected: Bool { checkTcpClientConnected() }
+    public var isTcpConnected: Bool = false //{ checkTcpClientConnected() }
+    
     /// 作为UDP客户端是否启动并有监听端口，可能是系统随机分配
     public var isUdpListening: Bool { checkUdpClientListen() }
 
@@ -63,8 +65,9 @@ public class YMLNetworkService: NSObject {
     
     public func createTcpChannel(info: DeviceInfo) -> Bool {
         // TODO: -
-        hasConnectedToDevice = info
-        guard let discoveryInfo = discoveredDevice.filter({$0.device.ip == info.ip}).first else {return false}
+        
+        guard let discoveryInfo = discoveredDevice.filter({ $0.device.ip == info.ip }).first else { return false }
+        updateHasConnectedToDevice(with: info) //先设置成当前设备，如果后续失败会更改相应设置
         return connectToHost(info.ip, on: discoveryInfo.TcpPort)
     }
 
@@ -84,7 +87,7 @@ public class YMLNetworkService: NSObject {
     /// - Parameter info: 建立连接的设备信息
     /// - Returns: 返回连接建立状况
     public func createUdpChannel(info: DeviceInfo) -> Bool {
-        hasConnectedToDevice = info
+        
         return setupUdpSocket(on: UDP_LISTEN_PORT)
     }
     
@@ -115,12 +118,17 @@ public class YMLNetworkService: NSObject {
     
     private func checkTcpClientConnected() -> Bool {
         guard let tcpClient = tcpSocketClient else { return false }
-        return tcpClient.isConnected
+        print(#line, #function, tcpClient )
+        return  tcpClient.isConnected
     }
     
     private func checkUdpClientListen() -> Bool {
         guard let udpClient = udpSocket else { return false }
         return udpClient.localPort() != 0
+    }
+    
+    func updateHasConnectedToDevice(with info: DeviceInfo? = nil) {
+        hasConnectedToDevice = info
     }
 }
 
@@ -169,6 +177,10 @@ extension YMLNetworkService {
 // MARK: - 设备查找
 
 extension YMLNetworkService {
+    /// 处理发送设备搜寻广播后收到的UDP数据
+    /// - Parameters:
+    ///   - data: 收到的UDP数据（默认加密）
+    ///   - address: UDP数据发送方地址信息
     func searchDeviceDataHandler(data: Data, from address: Data) {
         var ip: NSString?
         var port: UInt16 = 0

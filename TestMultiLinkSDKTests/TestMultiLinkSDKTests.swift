@@ -23,16 +23,22 @@ final class TestMultiLinkSDKTests: XCTestCase {
         sut = YMLNetworkService()
         
         mockServer = MockUdpServer()
-        _ = mockServer.setupServer()
+        _ = mockServer.setupUdpServer()
+        _ = mockServer.setupTcpServer()
     }
 
     override func tearDownWithError() throws {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
         try super.tearDownWithError()
         
+        mockServer.tcpServerSocket = nil
+        
         mockServer.udpSocket?.close()
         mockServer.udpSocket = nil
         mockServer = nil
+        
+        sut.tcpSocketClient?.disconnect()
+        sut.tcpSocketClient = nil
         
         sut.udpSocket?.close()
         sut.udpSocket = nil
@@ -44,21 +50,6 @@ final class TestMultiLinkSDKTests: XCTestCase {
         let maxPort = UInt32(UINT16_MAX)
         let value = maxPort - minPort + 1
         return UInt16(minPort + arc4random_uniform(value))
-    }
-
-    func testExample() throws {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-        // Any test you write for XCTest can be annotated as throws and async.
-        // Mark your test throws to produce an unexpected failure when your test encounters an uncaught error.
-        // Mark your test async to allow awaiting for asynchronous code to complete. Check the results with assertions afterwards.
-    }
-
-    func testPerformanceExample() throws {
-        // This is an example of a performance test case.
-        measure {
-            // Put the code you want to measure the time of here.
-        }
     }
     
     func testInitSDK() {
@@ -172,5 +163,35 @@ final class TestMultiLinkSDKTests: XCTestCase {
         XCTAssertTrue(sut.sendGeneralCommand(command: "Mouse", data: KEYData()))
         
         wait(for: [expectation], timeout: 1)
+    }
+    
+    //MARK: - TCP
+    
+    func testCreateTcpChannel() {
+        
+        let deviceInfo = DeviceInfo(name: "Local", platform: "platform", ip: "127.0.0.1", sdkVersion: "SdkVersion")
+        let discoveryInfo = DiscoveryInfo(device: deviceInfo, TcpPort: 8000, UdpPort: 8000)
+        sut.discoveredDevice.append(discoveryInfo)
+        
+        let expectation = XCTestExpectation(description: "测试TCP链接")
+        let didAcceptNewSocketCommand = {
+            expectation.fulfill()
+        }
+        
+        mockServer.didSendGeneralCommand = didAcceptNewSocketCommand
+        
+        let connectToTcpServerfResult = sut.createTcpChannel(info: deviceInfo)
+        
+        XCTAssertTrue(connectToTcpServerfResult)
+        XCTAssertTrue(sut.isTcpConnected)
+        XCTAssertNotNil(sut.hasConnectedToDevice)
+        wait(for: [expectation], timeout: 1)
+        
+    }
+    
+    func testListeningOn() {
+        sut.listeningOn(port: "10011")
+        XCTAssertNotNil(sut.tcpSocketServer)
+        XCTAssertTrue(sut.isTcpListening)
     }
 }

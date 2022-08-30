@@ -16,6 +16,7 @@ struct MockListener: Listener {
     var onDeliver: Callback = nil
     var onDeliverDeviceInfo: Callback = nil
     var onNotified: Callback = nil
+    var onAccept: Callback = nil
     
     var expectation: XCTestExpectation? = nil
     
@@ -35,6 +36,5 @@ struct MockListener: Listener {
     func notified(with message: String) {
         self.onNotified?()
     }
-    
     
 }
