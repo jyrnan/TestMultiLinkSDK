@@ -8,19 +8,32 @@
 import Foundation
 import CocoaAsyncSocket
 
-class MockUdpServer: NSObject, GCDAsyncUdpSocketDelegate, GCDAsyncSocketDelegate{
+class MockServer: NSObject, GCDAsyncUdpSocketDelegate, GCDAsyncSocketDelegate{
     
     typealias Callback = Optional<() -> Void>
     var udpSocket: GCDAsyncUdpSocket?
     var tcpServerSocket: GCDAsyncSocket?
+    var tcpClients = [GCDAsyncSocket]()
+    
+    var tcpPort: UInt16
+    var udpPort: UInt16
     
     var didSendGeneralCommand: Callback = nil
+    var didAcceptNewSocket: Callback = nil
+    var didReadTcpData: Callback = nil
+    
+    var shouldRecieveData: Data? = nil
+    
+    init(tcpPort: UInt16, udpPort: UInt16) {
+        self.tcpPort = tcpPort
+        self.udpPort = udpPort
+    }
     
     func setupTcpServer() -> Bool {
         tcpServerSocket = GCDAsyncSocket(delegate: self, delegateQueue: DispatchQueue.main)
         
         do {
-            try tcpServerSocket?.accept(onPort: 8000)
+            try tcpServerSocket?.accept(onPort: tcpPort)
             print("MockServer tcp信道开始了")
             
             return true
@@ -36,7 +49,7 @@ class MockUdpServer: NSObject, GCDAsyncUdpSocketDelegate, GCDAsyncSocketDelegate
         
         do {
            
-            try udpSocket?.bind(toPort: 8000)
+            try udpSocket?.bind(toPort: udpPort)
             try udpSocket?.enableBroadcast(true)
             try udpSocket?.beginReceiving()
             
@@ -71,13 +84,25 @@ class MockUdpServer: NSObject, GCDAsyncUdpSocketDelegate, GCDAsyncSocketDelegate
     
     func socket(_ sock: GCDAsyncSocket, didAcceptNewSocket newSocket: GCDAsyncSocket) {
         print(sock.description)
-        didSendGeneralCommand?()
+        didAcceptNewSocket?()
     
-        print(#line, #function,"\n接受TCP连接成功." + "连接地址: " + newSocket.connectedHost! + " 端口号: \(newSocket.connectedPort)")
+        print(#line, #function,"接受TCP连接成功." + "连接地址: " + newSocket.connectedHost! + " 端口号: \(newSocket.connectedPort)")
         
-        
+        self.tcpClients.append(newSocket)
         // 第一次开始读取Data
         newSocket.readData(withTimeout: -1, tag: 0)
     }
+    
+    func socket(_ sock: GCDAsyncSocket, didRead data: Data, withTag tag: Int) {
+        print(#line, #function,"读取TCP数据成功." + "连接地址: \(sock.connectedHost)" + " 端口号: \(sock.connectedPort)")
+        if data == shouldRecieveData {
+            didReadTcpData?()
+            sock.write(data, withTimeout: -1, tag: 0) //回复数据
+        }
+        
+        sock.readData(withTimeout: -1, tag: 0)
+    }
+    
+    
 }
 

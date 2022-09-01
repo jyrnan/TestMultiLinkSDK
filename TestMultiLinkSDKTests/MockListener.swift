@@ -11,19 +11,20 @@ import XCTest
 struct MockListener: Listener {
     
     typealias Callback = Optional<() -> Void>
-    let verifyData: Data!
+    let shouldRecieveData: Data!
 
     var onDeliver: Callback = nil
     var onDeliverDeviceInfo: Callback = nil
     var onNotified: Callback = nil
     var onAccept: Callback = nil
+//    var onRecieveTcpData: Callback = nil
     
     var expectation: XCTestExpectation? = nil
     
     var message: String = ""
     
     func deliver(data: Data) {
-        if data == verifyData {
+        if data == shouldRecieveData {
             self.onDeliver?()
         }
     }

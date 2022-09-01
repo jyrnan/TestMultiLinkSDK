@@ -10,9 +10,12 @@ import XCTest
 
 final class TestMultiLinkSDKTests: XCTestCase {
     var sut: YMLNetworkService!
-    var mockServer: MockUdpServer!
+    var mockServer: MockServer!
     
-    let willSentData: Data = "TestData".data(using: .utf8)!
+    var tcpPort: UInt16!
+    var udpPort: UInt16!
+    
+    let sentData: Data = "TestData".data(using: .utf8)!
     
     var localDevice: DeviceInfo = .init(name: "LocalDevice")
 
@@ -22,7 +25,10 @@ final class TestMultiLinkSDKTests: XCTestCase {
         
         sut = YMLNetworkService()
         
-        mockServer = MockUdpServer()
+        tcpPort = randomValidPort()
+        udpPort = sut.UDP_PORT
+        
+        mockServer = MockServer(tcpPort: tcpPort, udpPort: udpPort)
         _ = mockServer.setupUdpServer()
         _ = mockServer.setupTcpServer()
     }
@@ -31,8 +37,9 @@ final class TestMultiLinkSDKTests: XCTestCase {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
         try super.tearDownWithError()
         
+        mockServer.tcpServerSocket?.disconnect()
         mockServer.tcpServerSocket = nil
-        
+
         mockServer.udpSocket?.close()
         mockServer.udpSocket = nil
         mockServer = nil
@@ -51,6 +58,16 @@ final class TestMultiLinkSDKTests: XCTestCase {
         let value = maxPort - minPort + 1
         return UInt16(minPort + arc4random_uniform(value))
     }
+    
+    private func connectToMockTcpServer() -> Bool {
+        let deviceInfo = DeviceInfo(name: "Local", platform: "platform", ip: "127.0.0.1", sdkVersion: "SdkVersion")
+        let discoveryInfo = DiscoveryInfo(device: deviceInfo, TcpPort: tcpPort, UdpPort: udpPort)
+        sut.discoveredDevice.append(discoveryInfo)
+        
+        return sut.createTcpChannel(info: deviceInfo)
+    }
+    
+    // MARK: - 测试方法
     
     func testInitSDK() {
         sut.initSDK(key: "TestClientName")
@@ -124,7 +141,7 @@ final class TestMultiLinkSDKTests: XCTestCase {
 
     func testSearchDeciceInfo() {
         let expectation = XCTestExpectation(description: "测试获得查找结果")
-        var mockListener = MockListener(verifyData: willSentData)
+        var mockListener = MockListener(shouldRecieveData: sentData)
         
         let didDeliverDeciceInfo = {
             expectation.fulfill()
@@ -150,7 +167,7 @@ final class TestMultiLinkSDKTests: XCTestCase {
         
         mockServer.didSendGeneralCommand = didSendGeneralCommand
         
-        guard sut.setupUdpSocket(on:sut.UDP_LISTEN_PORT) else {
+        guard sut.setupUdpSocket(on: sut.UDP_LISTEN_PORT) else {
             XCTFail("不能建立本地连接，测试失败")
             return
         }
@@ -165,33 +182,76 @@ final class TestMultiLinkSDKTests: XCTestCase {
         wait(for: [expectation], timeout: 1)
     }
     
-    //MARK: - TCP
+    // MARK: - TCP
     
     func testCreateTcpChannel() {
-        
-        let deviceInfo = DeviceInfo(name: "Local", platform: "platform", ip: "127.0.0.1", sdkVersion: "SdkVersion")
-        let discoveryInfo = DiscoveryInfo(device: deviceInfo, TcpPort: 8000, UdpPort: 8000)
-        sut.discoveredDevice.append(discoveryInfo)
-        
         let expectation = XCTestExpectation(description: "测试TCP链接")
-        let didAcceptNewSocketCommand = {
+        let didAcceptNewSocket = {
             expectation.fulfill()
         }
         
-        mockServer.didSendGeneralCommand = didAcceptNewSocketCommand
+        mockServer.didAcceptNewSocket = didAcceptNewSocket
         
-        let connectToTcpServerfResult = sut.createTcpChannel(info: deviceInfo)
+        let connectToTcpServerfResult = connectToMockTcpServer()
         
         XCTAssertTrue(connectToTcpServerfResult)
         XCTAssertTrue(sut.isTcpConnected)
         XCTAssertNotNil(sut.hasConnectedToDevice)
         wait(for: [expectation], timeout: 1)
-        
     }
     
     func testListeningOn() {
         sut.listeningOn(port: "10011")
         XCTAssertNotNil(sut.tcpSocketServer)
         XCTAssertTrue(sut.isTcpListening)
+    }
+    
+    func testSendTcpData() {
+        let expectation = XCTestExpectation(description: "测试TCP发送数据")
+        let didReadTcpData = {
+            expectation.fulfill()
+        }
+        
+        mockServer.didReadTcpData = didReadTcpData
+        mockServer.shouldRecieveData = sentData
+        
+        let connectToTcpServerfResult = connectToMockTcpServer()
+        
+        XCTAssertTrue(connectToTcpServerfResult)
+        XCTAssertTrue(sut.isTcpConnected)
+        XCTAssertNotNil(sut.hasConnectedToDevice)
+        
+        sut.sendTcpData(data: sentData)
+        
+        wait(for: [expectation], timeout: 1)
+    }
+    
+    func testCloseTcpChannel() {
+        let connectToTcpServerfResult = connectToMockTcpServer()
+        XCTAssertTrue(connectToTcpServerfResult)
+        
+        sut.closeTcpChannel()
+        XCTAssertNil(sut.tcpSocketClient)
+    }
+    
+    func testRecieveTcpData() {
+        let expectation = XCTestExpectation(description: "测试接收TCP数据")
+        let didRecieveTcpData = {
+            expectation.fulfill()
+        }
+        
+        mockServer.shouldRecieveData = sentData
+        
+        let connectToTcpServerfResult = connectToMockTcpServer()
+        XCTAssertTrue(connectToTcpServerfResult)
+        
+        var mockListener = MockListener(shouldRecieveData: sentData)
+        mockListener.onDeliver = didRecieveTcpData
+        
+        sut.receiveTcpData(TCPListener: mockListener)
+        
+        sut.sendTcpData(data: sentData)
+        wait(for: [expectation], timeout: 1)
+        
     }
 }

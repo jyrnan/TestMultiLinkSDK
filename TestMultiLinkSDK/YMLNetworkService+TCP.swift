@@ -40,11 +40,12 @@ extension YMLNetworkService: GCDAsyncSocketDelegate {
     }
     
     /// 从客户端方向断开连接
-    public func closeTCPChannel() {
+    func closeTCPChannel() {
         guard let socket = tcpSocketClient else { return }
         socket.disconnect()
         print("tcp断开连接")
         lisener?.notified(with: "tcp断开连接")
+        tcpSocketClient = nil
     }
 
     // TODO: - 心跳方法
@@ -97,7 +98,7 @@ extension YMLNetworkService: GCDAsyncSocketDelegate {
     ///   - host: <#host description#>
     ///   - port: <#port description#>
     public func socket(_ sock: GCDAsyncSocket, didConnectToHost host: String, port: UInt16) {
-        print("连接到TCP服务器：" + host)
+        print(#line, #function, "连接到TCP服务器：" + host)
         print(#line, #function, tcpSocketClient?.isConnected)
         tcpSocketClient?.readData(withTimeout: -1, tag: 0)
     }
@@ -126,5 +127,9 @@ extension YMLNetworkService: GCDAsyncSocketDelegate {
         
         // 再次准备读取Data,以此来循环读取Data
         sock.readData(withTimeout: -1, tag: 0)
+    }
+    
+    public func socket(_ sock: GCDAsyncSocket, didWriteDataWithTag tag: Int) {
+        print(#line, #function, "发送了TCP数据，tag是\(tag)")
     }
 }

@@ -63,7 +63,7 @@ public class YMLNetworkService: NSObject {
         searchDevice()
     }
     
-    public func createTcpChannel(info: DeviceInfo) -> Bool {
+     public func createTcpChannel(info: DeviceInfo) -> Bool {
         // TODO: -
         
         guard let discoveryInfo = discoveredDevice.filter({ $0.device.ip == info.ip }).first else { return false }
@@ -73,6 +73,7 @@ public class YMLNetworkService: NSObject {
 
     public func sendTcpData(data: Data) {
         // TODO: -
+        sendTCPData(data: data)
     }
 
     public func receiveTcpData(TCPListener: Listener) {
@@ -81,6 +82,7 @@ public class YMLNetworkService: NSObject {
 
     public func closeTcpChannel() {
         // TODO: -
+        closeTCPChannel()
     }
     
     /// 建立一个UdpSoket，设置
@@ -111,17 +113,17 @@ public class YMLNetworkService: NSObject {
     
     // MARK: - 内部状态方法
 
-    private func checkTcpServerListen() -> Bool {
-        guard let tcpServer = tcpSocketServer else { return false }
-        return tcpServer.isConnected
-    }
-    
-    private func checkTcpClientConnected() -> Bool {
-        guard let tcpClient = tcpSocketClient else { return false }
-        print(#line, #function, tcpClient )
-        return  tcpClient.isConnected
-    }
-    
+//    private func checkTcpServerListen() -> Bool {
+//        guard let tcpServer = tcpSocketServer else { return false }
+//        return tcpServer.isConnected
+//    }
+//
+//    private func checkTcpClientConnected() -> Bool {
+//        guard let tcpClient = tcpSocketClient else { return false }
+//        print(#line, #function, tcpClient )
+//        return  tcpClient.isConnected
+//    }
+//
     private func checkUdpClientListen() -> Bool {
         guard let udpClient = udpSocket else { return false }
         return udpClient.localPort() != 0
